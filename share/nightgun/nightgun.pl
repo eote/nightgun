@@ -106,7 +106,7 @@ sub reload_store {
 
 sub load_store {
 
-	$state{store_loading}=1;
+    $state{store_loading}=1;
     my $path = shift;
     my $flag = shift;
     $GUI->content_begin_set;
@@ -120,10 +120,6 @@ sub load_store {
 		$path =~ s/^PARENT://;
 		$to_parent=1;
 	}
-	if($state{store}) {
-        my @info = $GUI->content_get_position;
-        $History->add($state{store}->{id},@info);# if(@info and $info[0] and $GUI->content_get());
-	}
 	$store = $Worker->load($path) unless($store);
 	unless($store) {
 		NightGun::message("load_store","Unable to load $path");
@@ -132,15 +128,6 @@ sub load_store {
 	}
 
     $GUI->content_progress_set;
-	if($store->{type} == $Worker->TYPE_URI) {
-	    $GUI->content_set_uri(_to_gtk($store->{data}));
-	}
-	else {
-	    $GUI->content_set_stream($store->{data});
-	}
-	
-    $GUI->content_progress_set;
-    $GUI->main_set_title(_to_gtk($store->{title} ? "NightGun - " . $store->{title} : "NightGun"));
     if(!($store->is_single)) {
     	$GUI->content_progress_set;
     	my @lists;
@@ -155,28 +142,40 @@ sub load_store {
 				map {my $t=$_;$t =~ s/^.*(:?\/|::)//;($t,$_)} @{$store->{files}};
 	    }	
     	$GUI->content_progress_set;
-	    $GUI->file_list_set(_to_gtk_a(@lists));
+	    $GUI->file_list_set($store->{donot_encode} ? @lists :  _to_gtk_a(@lists));
     }
+
+    if(!$store->{leaf} and !$store->is_single and ($store->{root} !~ /\/$/) ) {
+        NightGun::message("load_store","NO leaf,Try loading from history entry");
+        my @history_info = $History->get($store->{root});
+        if($history_info[0]) { # && $history_info[0] =~ /[^\/\\]$/) {
+            @_ = ($history_info[0],$flag);
+            NightGun::message("load_store",'loading history entry:' . $history_info[0]);
+            goto &load_store;
+            #($history_info[0],$flag);
+        }
+    }
+
+    if($store->{type} == $Worker->TYPE_URI) {
+        my $uri = $store->{data};
+        $uri = _to_gtk($uri) unless($store->{donot_encode});
+        $uri = uri_escape($uri,"%&") unless($store->{donot_escape});
+        $GUI->content_set_uri($uri);
+    }
+    else {
+        $GUI->content_set_stream($store->{data});
+    }
+	
+    $GUI->content_progress_set;
+    $GUI->main_set_title(_to_gtk($store->{title} ? "NightGun - " . $store->{title} : "NightGun"));
     $state{store}=$store;
     $state{id}=$store->{id};
     &update_ui;
     $GUI->content_progress_set;
     $GUI->content_end_set;
     $GUI->statusbar_set("Loaded");
-    if($store->{leaf}) {
-		$History->add($store->{root},$store->{leaf}) if($store->{leaf} =~ /[^\/\\]$/);
-	}
-	elsif($to_parent) {
-	}
-	elsif((!$store->is_single) and ($store->{root} !~ /\/$/) and (!$store->{data})) {
-        my @history_info = $History->get($store->{root});
-		if($history_info[0] && $history_info[0] =~ /[^\/\\]$/) {
-        	NightGun::message("load_store",
-				"NO leaf,Try loading from history entry");
-			load_store($history_info[0],$flag);
-		}
-	}
-	$state{store_loading}=0;
+    save_store_state($state{store}) if($state{store});
+    $state{store_loading}=0;
 }
 
 sub update_ui {
@@ -190,6 +189,19 @@ sub update_ui {
 	$GUI->content_set_position(@history_info);
 }
 
+sub save_store_state {
+    my $store = shift;
+    if($store) {
+        my @info = $GUI->content_get_position;
+        $History->add($store->{id},@info) if(@info);
+    }
+    if($store->{leaf} and $store->{leaf} =~ m/[^\/\\]$/) {
+        $History->add($store->{root},$store->{leaf});
+    }
+    return $store;
+}
+
+
 sub save_config {
     $GUI->save_config($NightGun::Config->{GUI});
     $NightGun::Config->{APP}->{last_location} = $state{store}->{root} if($state{store});
@@ -197,6 +209,9 @@ sub save_config {
     if($state{store}) {
         my @info = $GUI->content_get_position;
         $History->add($state{store}->{id},@info) if(@info);# and $info[0] and $info[1]);
+    }
+    if($state{store}->{leaf}) {
+        $History->add($state{store}->{root},$state{store}->{leaf});
     }
 }
 

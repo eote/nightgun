@@ -27,6 +27,10 @@ if(!$install_base) {
 	$install_base = File::Spec->canonpath(File::Spec->catdir($vol,$dir,File::Spec->updir));
 }
 
+
+$ENV{NIGHTGUN_DEBUG}=1;
+
+
 exec File::Spec->catfile($install_base,qw/share nightgun nightgun.pl/),@ARGV or die("$!\n");
 
 

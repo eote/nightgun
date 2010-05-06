@@ -10,8 +10,8 @@ BEGIN {
 	require Exporter;
 	our @ISA=qw/Exporter/;
 	our @EXPORT = qw/$nightgun_global/;
-	my $NDEBUG = 0;
 #	print STDERR "\n***Package NightGun BEGIN***\n";
+        $NDEBUG = 1 unless($ENV{NIGHTGUN_DEBUG});
 	sub import {
 		my @what;
 		#die(scalar(@_) . ":@_\n");

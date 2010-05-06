@@ -91,11 +91,21 @@ sub init {
         $self->{glade_file}=$glade_file;
         $self->{glade}=Gtk2::GladeXML->new($glade_file);
         $self->{glade}->signal_autoconnect_from_package($self);
+
         foreach(keys %WIDGETS_MAP) {
-            #NightGun::App::dump($_);
             $self->{$_} = 
                 $self->{glade}->get_widget($WIDGETS_MAP{$_});
         }
+
+        $self->{encoding_text} = $self->{encoding_list}->get_child();
+        $self->{encoding_text}->signal_connect("activate",sub {$self->encoding_list_changed});
+        $self->{hot_list_entry} = $self->{hot_list}->get_child();
+        $self->{hot_list_entry}->signal_connect("activate",sub {$self->hot_list_changed});
+
+        #foreach(keys %WIDGETS_MAP) {
+        #    NightGun::App::dump($self->{$_});
+        #}
+
         $self->{encoding_list}->append_text($_) foreach(qw/auto utf8 gb2312 big5/);
         $self->init_tree;
         NightGun::App::fill_about_dialog($self->{about_window});

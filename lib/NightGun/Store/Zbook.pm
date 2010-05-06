@@ -93,7 +93,7 @@ LoadEntry:
                 	if(/(:?aaa|index|content)\.(:?html|htm)/i) {
 						$self->{data} = "jar:file:///$_\n";
 						$self->{data} =~ s/::/!/;
-						print STDERR $self->{data},"\n";
+					#	print STDERR $self->{data},"\n";
 	                    last;
     	            }
         	    }

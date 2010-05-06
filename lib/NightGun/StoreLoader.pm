@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use NightGun;
 use NightGun::Store;
-my @filetype = ("Zbook","Archive","WebSaver","WWW","Files");
+my @filetype = ("LocalMedia","Zbook","Archive","WebSaver","WWW","Files");
 my @dyn_store = map {"NightGun::Store::" . $_} @filetype;
 my @sta_store = ("NightGun::Store");
 my %used_store = (

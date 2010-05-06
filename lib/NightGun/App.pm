@@ -10,8 +10,9 @@ use constant {
     DATE => '2008-12-31',
     GUI => 'GTK2',
     VIEW => 'MozEmbed',
+    LOGING => 0,
 #    VIEW => 'Normal',
-    DEBUG => 1
+    DEBUG => 0,
 };
     if(not NightGun::App::DEBUG) {
         eval 'sub dump {};';
