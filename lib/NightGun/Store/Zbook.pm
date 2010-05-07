@@ -139,6 +139,7 @@ sub parse_location {
     $path =~ s/^\/+/\//;
     $path =~ s/!\//$PATH_SEP\//;
     if($path =~ $PATH_EXP) {
+        return $path,"" unless($2);
         return $1,$path;
     }
     else {

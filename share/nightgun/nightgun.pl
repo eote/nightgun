@@ -97,7 +97,7 @@ sub print_arg {
 
 sub select_store {
     my $file=shift;
-    load_store(_from_gtk($file),1) if($file);
+    load_store(_from_gtk($file),0) if($file);
 }
 
 sub reload_store {
@@ -108,7 +108,7 @@ sub load_store {
 
     $state{store_loading}=1;
     my $path = shift;
-    my $flag = shift;
+    my $flag = shift or 0; ##### 0,undef = normal ; 1 = from_history_leaf
     $GUI->content_begin_set;
     $GUI->statusbar_set("Loading " . $path);
     NightGun::message(
@@ -145,11 +145,11 @@ sub load_store {
 	    $GUI->file_list_set($store->{donot_encode} ? @lists :  _to_gtk_a(@lists));
     }
 
-    if(!$store->{leaf} and !$store->is_single and ($store->{root} !~ /\/$/) ) {
+    if((!$flag eq 1) and  !$store->{leaf} and !$store->is_single and ($store->{root} !~ /\/$/) ) {
         NightGun::message("load_store","NO leaf,Try loading from history entry");
         my @history_info = $History->get($store->{root});
         if($history_info[0]) { # && $history_info[0] =~ /[^\/\\]$/) {
-            @_ = ($history_info[0],$flag);
+            @_ = ($history_info[0],1);
             NightGun::message("load_store",'loading history entry:' . $history_info[0]);
             goto &load_store;
             #($history_info[0],$flag);
