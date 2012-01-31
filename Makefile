@@ -1,4 +1,4 @@
-#     PREREQ_PM => { Test::More=>q[0], File::Path=>q[0], Module::Build=>q[0.28], File::Copy=>q[0], IO::File=>q[0], File::Spec=>q[0], Gtk2::MozEmbed=>q[0], File::BaseDir=>q[0.03], Gtk2::GladeXML=>q[0], File::DesktopEntry=>q[0.03], Encode=>q[0], POSIX=>q[0], Gtk2=>q[1.040], File::MimeInfo=>q[0.12] }
+#     PREREQ_PM => { Encode=>q[0], File::BaseDir=>q[0.03], File::Copy=>q[0], File::DesktopEntry=>q[0.03], File::MimeInfo=>q[0.12], File::Path=>q[0], File::Spec=>q[0], Gtk2=>q[1.040], Gtk2::GladeXML=>q[0], IO::File=>q[0], Module::Build=>q[0.28], POSIX=>q[0], Test::More=>q[0] }
 
 all : force_do_it
 	/usr/bin/perl Build --makefile_env_macros 1
@@ -28,6 +28,8 @@ distcheck : force_do_it
 	/usr/bin/perl Build --makefile_env_macros 1 distcheck
 distdir : force_do_it
 	/usr/bin/perl Build --makefile_env_macros 1 distdir
+distinstall : force_do_it
+	/usr/bin/perl Build --makefile_env_macros 1 distinstall
 distmeta : force_do_it
 	/usr/bin/perl Build --makefile_env_macros 1 distmeta
 distsign : force_do_it
@@ -44,8 +46,12 @@ html : force_do_it
 	/usr/bin/perl Build --makefile_env_macros 1 html
 install : force_do_it
 	/usr/bin/perl Build --makefile_env_macros 1 install
+installdeps : force_do_it
+	/usr/bin/perl Build --makefile_env_macros 1 installdeps
 manifest : force_do_it
 	/usr/bin/perl Build --makefile_env_macros 1 manifest
+manifest_skip : force_do_it
+	/usr/bin/perl Build --makefile_env_macros 1 manifest_skip
 manpages : force_do_it
 	/usr/bin/perl Build --makefile_env_macros 1 manpages
 messages : force_do_it

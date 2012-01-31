@@ -1,0 +1,182 @@
+{
+   "abstract" : "A text archives reader",
+   "author" : [
+      "xiaoranzzz xiaoranzzz@gmail.com"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110440",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "nightgun",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "File::Path" : 0,
+            "Module::Build" : "0.28",
+            "Test::More" : 0
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.38"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Encode" : 0,
+            "File::BaseDir" : "0.03",
+            "File::Copy" : 0,
+            "File::DesktopEntry" : "0.03",
+            "File::MimeInfo" : "0.12",
+            "File::Spec" : 0,
+            "Gtk2" : "1.040",
+            "Gtk2::GladeXML" : 0,
+            "IO::File" : 0,
+            "POSIX" : 0,
+            "perl" : "v5.8.0"
+         }
+      }
+   },
+   "provides" : {
+      "MyPlace::Archive" : {
+         "file" : "lib/MyPlace/Archive.pm",
+         "version" : 0
+      },
+      "MyPlace::Archive::7z" : {
+         "file" : "lib/MyPlace/Archive/7z.pm",
+         "version" : 0
+      },
+      "MyPlace::Archive::7za" : {
+         "file" : "lib/MyPlace/Archive/7za.pm",
+         "version" : 0
+      },
+      "MyPlace::Archive::7zr" : {
+         "file" : "lib/MyPlace/Archive/7zr.pm",
+         "version" : 0
+      },
+      "MyPlace::Archive::Bzip2" : {
+         "file" : "lib/MyPlace/Archive/Bzip2.pm",
+         "version" : 0
+      },
+      "MyPlace::Archive::Gzip" : {
+         "file" : "lib/MyPlace/Archive/Gzip.pm",
+         "version" : 0
+      },
+      "MyPlace::Archive::Rar" : {
+         "file" : "lib/MyPlace/Archive/Rar.pm",
+         "version" : 0
+      },
+      "MyPlace::Archive::Tar" : {
+         "file" : "lib/MyPlace/Archive/Tar.pm",
+         "version" : 0
+      },
+      "MyPlace::Archive::Zip" : {
+         "file" : "lib/MyPlace/Archive/Zip.pm",
+         "version" : 0
+      },
+      "MyPlace::Encode" : {
+         "file" : "lib/MyPlace/Encode.pm",
+         "version" : "1"
+      },
+      "MyPlace::Gtk2" : {
+         "file" : "lib/MyPlace/Gtk2.pm",
+         "version" : "1"
+      },
+      "MyPlace::Gtk2::SCComboBox" : {
+         "file" : "lib/MyPlace/Gtk2/SCComboBox.pm",
+         "version" : 0
+      },
+      "NightGun" : {
+         "file" : "lib/NightGun.pm",
+         "version" : 0
+      },
+      "NightGun::App" : {
+         "file" : "lib/NightGun/App.pm",
+         "version" : "1.2"
+      },
+      "NightGun::Debug" : {
+         "file" : "lib/NightGun/Debug.pm",
+         "version" : 0
+      },
+      "NightGun::Encode" : {
+         "file" : "lib/NightGun/Encode.pm",
+         "version" : 0
+      },
+      "NightGun::Gui" : {
+         "file" : "lib/NightGun/Gui.pm",
+         "version" : 0
+      },
+      "NightGun::Gui::ContentView" : {
+         "file" : "lib/NightGun/Gui/ContentView.pm",
+         "version" : 0
+      },
+      "NightGun::Gui::HTMLView" : {
+         "file" : "lib/NightGun/Gui/HTMLView.pm",
+         "version" : 0
+      },
+      "NightGun::Gui::TextView" : {
+         "file" : "lib/NightGun/Gui/TextView.pm",
+         "version" : 0
+      },
+      "NightGun::Gui::View" : {
+         "file" : "lib/NightGun/Gui/View.pm",
+         "version" : 0
+      },
+      "NightGun::History" : {
+         "file" : "lib/NightGun/History.pm",
+         "version" : 0
+      },
+      "NightGun::Recents" : {
+         "file" : "lib/NightGun.pm",
+         "version" : 0
+      },
+      "NightGun::Store" : {
+         "file" : "lib/NightGun/Store.pm",
+         "version" : 0
+      },
+      "NightGun::Store::Archive" : {
+         "file" : "lib/NightGun/Store/Archive.pm",
+         "version" : 0
+      },
+      "NightGun::Store::Base" : {
+         "file" : "lib/NightGun/Store/Base.pm",
+         "version" : 0
+      },
+      "NightGun::Store::Files" : {
+         "file" : "lib/NightGun/Store/Files.pm",
+         "version" : 0
+      },
+      "NightGun::Store::LocalMedia" : {
+         "file" : "lib/NightGun/Store/LocalMedia.pm",
+         "version" : 0
+      },
+      "NightGun::Store::WWW" : {
+         "file" : "lib/NightGun/Store/WWW.pm",
+         "version" : 0
+      },
+      "NightGun::Store::WebSaver" : {
+         "file" : "lib/NightGun/Store/WebSaver.pm",
+         "version" : 0
+      },
+      "NightGun::Store::Zbook" : {
+         "file" : "lib/NightGun/Store/Zbook.pm",
+         "version" : 0
+      },
+      "NightGun::StoreLoader" : {
+         "file" : "lib/NightGun/StoreLoader.pm",
+         "version" : 0
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ]
+   },
+   "version" : "1.2"
+}

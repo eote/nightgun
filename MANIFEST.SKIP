@@ -37,3 +37,8 @@
 \B\._
 # Avoid archives of this distribution
 \bnightgun-[\d\.\_]+
+^MYMETA\.yml$
+^MYMETA\.json$
+
+#Git
+^\.git

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use File::Spec;
 my $install_base;
-my $VERSION='1.15';
+my $VERSION='1.20';
 
 if(@ARGV && ($ARGV[0] eq '-h' || $ARGV[0] eq '--help')) {
 	print STDERR <<USAGE;

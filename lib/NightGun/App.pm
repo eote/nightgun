@@ -3,10 +3,10 @@ package NightGun::App;
 use Exporter;
 use Term::ANSIColor;
 use Data::Dumper;
-my $VERSION = 1.15;
+my $VERSION = 1.20;
 use constant {
     NAME => 'NightGun',
-    VERSION => '1.15',
+    VERSION => '1.20',
     AUTHORS => 'xiaoranzzz@myplace.hell',
     COPYRIGHT => 'xiaoranzzz@myplace.hell 2008',
     COMMENTS => 'text reader suitable for night reading',
