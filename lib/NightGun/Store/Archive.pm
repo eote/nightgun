@@ -74,12 +74,14 @@ sub load {
 	$self->{data}=undef;
 	$self->{root}=$source;
 	$self->{leaf}=$path;
+	$self->{entry}=$entry;
 LoadEntry:
     if($entry and $entry !~ /\/$/) {
         $self->{name}=$path;
         $self->{parent}=$path;
         $self->{parent} =~ s/\/[^\/]+$/\//;
         $self->{data}=$archive->extract($source,$entry);
+		$self->{entry} = $entry;
 		$self->{type}=NightGun::Store::TYPE_UNKNOWN;
 #		if($self->type_what($entry) eq $self->TYPE_URI) {
 #			my $tmpfile = $self->get_tempfile($source,$entry);
@@ -99,10 +101,12 @@ LoadEntry:
             $self->{files} = $files;
             $self->{dirs} = $dirs;
         if(@{$CACHED{$source}->{dirs}} == 0 and @{$CACHED{$source}->{files}} == 1) {
-            $self->{data} = $archive->extract($source,$CACHED{$source}->{files}->[0]);
+			my $filename = $CACHED{$source}->{files}->[0];
+            $self->{data} = $archive->extract($source,$filename);
 			#_debug_print $self->{data};
 			$self->{files}=undef;
 			$self->{dirs}=undef;
+			$self->{entry} = $filename;
 			$self->{type}=NightGun::Store::TYPE_UNKNOWN;
         }
         else {

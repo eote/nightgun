@@ -2,7 +2,7 @@ package NightGun::Store;
 #use NightGun;
 use Term::ANSIColor;
 use File::Temp qw/tempdir/;
-use fields qw/id root leaf title parent files dirs data type name ext1 ext2 donot_encode donot_escape/;
+use fields qw/id root leaf title parent files dirs data type name ext1 ext2 donot_encode donot_escape entry url/;
 
 my $NO_PLAIN_TEXT = qr/\.(:?pdf|swf|flv|gs|ps|html|htm|png|jpeg|jpg|gif|asp|rm|rmvb|avi|xml|mkv|doc|mp3)$/i;
 

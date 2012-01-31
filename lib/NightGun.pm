@@ -41,6 +41,7 @@ BEGIN {
 sub init {
     ($AppDir,$ConfigDir)=@_;
     &loadConfig;
+	$Config = {} unless($Config);
 }
 
 sub destory {

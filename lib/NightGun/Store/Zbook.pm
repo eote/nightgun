@@ -55,7 +55,8 @@ LoadEntry:
         $self->{name}=$path;
         $self->{parent}=$path;
         $self->{parent} =~ s/\/[^\/]+$/\//;
-        $self->{data} = build_jar($source,$entry);
+        $self->{data} = $self->{ext1}->extract($source,$entry);
+        $self->{url} = build_jar($source,$entry);
     }
     else { 
         my ($dirs,$files) = $self->list_archive($source,$entry);
@@ -67,7 +68,8 @@ LoadEntry:
             $self->{name}=$path;
             $self->{parent}=$path;
             $self->{parent} =~ s/\/[^\/]+$/\//;
-            $self->{data} = build_jar($source,$entry);
+			$self->{data} = $self->{ext1}->extract($source,$entry);
+	        $self->{url} = build_jar($source,$entry);
             if($entry !~ /\//) {
                 $self->{parent} =~ s/\/$//;
             }
@@ -78,7 +80,8 @@ LoadEntry:
         else {
             $self->{files} = $files;
             $self->{dirs} = $dirs;
-            $self->{data} = build_jar($source);
+			$self->{data} = undef;
+	        $self->{url} = build_jar($source);
             if($entry) {
                 $self->{name} = $source . $PATH_SEP . "\/" . $entry;
                 $self->{parent} = $self->{name};
