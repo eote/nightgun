@@ -318,7 +318,7 @@ my $build = $class->new(
 	dist_abstract => 'A text archives reader',
 	dist_author => 'xiaoranzzz xiaoranzzz@gmail.com',
 	license => 'perl',
-	script_files => ['bin/nightgun'],
+	script_files => ['bin/nightgun','bin/nightgun-http-open'],
 	data_files => { share => 'share' },
 	requires => {
 		'perl'           => '5.8.0',

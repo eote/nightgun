@@ -6,6 +6,7 @@ our $ConfigDir;
 our $Config;
 our %Global;
 our $nightgun_global = \%Global;
+no warnings;
 BEGIN {
 	require Exporter;
 	our @ISA=qw/Exporter/;
@@ -32,8 +33,9 @@ BEGIN {
 			sub dump{1};
 		}
 		else {
-			require NightGun::Debug;
-			import NightGun::Debug;
+			no warnings;
+			use NightGun::Debug;
+			#import NightGun::Debug;
 		}
 	}
 }
@@ -71,7 +73,6 @@ sub saveConfig {
 1;
 
 package NightGun::History;
-use NightGun;
 use strict;
 
 sub new {
@@ -103,7 +104,6 @@ sub save {
 }
 1;
 package NightGun::Recents;
-use NightGun;
 use strict;
 use constant RECENTS_ITEM_MAX=>100;
 sub new {

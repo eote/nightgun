@@ -25,9 +25,19 @@ if($OPTS{'help'} or $OPTS{'manual'}) {
 }
 
 use File::Spec;
+
+my $program = 'htmlview';
+
+foreach my $app (qw/epiphany firefox iceweal/) {
+	if(system('which',$app)==0) {
+		$program = $app;
+		last;
+	}
+}
+
 foreach(@ARGV) {
 	my $file = File::Spec->rel2abs($_);
-	system('htmlview','http://localhost/nightgun' . $file);
+	system($program,'http://localhost/nightgun' . $file);
 }
 
 __END__

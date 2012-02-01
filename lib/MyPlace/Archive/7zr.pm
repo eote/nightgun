@@ -19,7 +19,7 @@ sub list_content {
     open FI,"-|","7zr","l",$filename;
     my @result;
     while(<FI>) {
-        #print STDERR $_;
+        print STDERR $_;
         chomp;
         if(/^[\d-]+\s+[\d:]+\s+[\.\w\s]+\s+\d+\s+[\d\s]+\s+(.+)$/) {
             push @result,$1 . "\n";

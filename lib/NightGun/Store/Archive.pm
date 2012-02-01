@@ -73,7 +73,7 @@ sub load {
 	$self->{dirs}=undef;
 	$self->{data}=undef;
 	$self->{root}=$source;
-	$self->{leaf}=$path;
+#	$self->{leaf}=$path;
 	$self->{entry}=$entry;
 LoadEntry:
     if($entry and $entry !~ /\/$/) {
@@ -102,10 +102,10 @@ LoadEntry:
             $self->{dirs} = $dirs;
         if(@{$CACHED{$source}->{dirs}} == 0 and @{$CACHED{$source}->{files}} == 1) {
 			my $filename = $CACHED{$source}->{files}->[0];
-            $self->{data} = $archive->extract($source,$filename);
+            $self->{data} = $archive->extract($source,$filename) if($path !~ m/\/$/);
 			#_debug_print $self->{data};
-			$self->{files}=undef;
-			$self->{dirs}=undef;
+#			$self->{files}=undef;
+#			$self->{dirs}=undef;
 			$self->{entry} = $filename;
 			$self->{type}=NightGun::Store::TYPE_UNKNOWN;
         }
@@ -127,6 +127,7 @@ LoadEntry:
         $self->{parent} = substr($self->{parent},0,$l);
     }
     $self->{title} = $path;
+	$self->{leaf} = $entry ? $path : '';
     $self->{id} = $path;
     return $self;
 }

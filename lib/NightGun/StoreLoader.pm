@@ -35,20 +35,20 @@ sub load {
 			last;
 		}
 	}
-	if($store && $store->{data} && $store->{type}==NightGun::Store::TYPE_UNKNOWN) {
-		my $type = NightGun::Store->type_what($store->{id});
-		$store->{type}=$type;
-		if($type eq TYPE_URI) {
-			my $tmp = NightGun::Store->get_tempfile(
-				$store->{root},
-				$store->{leaf},
-				);
-			open FO,">",$tmp;
-			print FO $store->{data};
-			close FO;
-			$store->{data}=$tmp;
-		}
-	}
+#	if($store && $store->{data} && $store->{type}==NightGun::Store::TYPE_UNKNOWN) {
+#		my $type = NightGun::Store->type_what($store->{id});
+#		$store->{type}=$type;
+#		if($type eq TYPE_URI) {
+#			my $tmp = NightGun::Store->get_tempfile(
+#				$store->{root},
+#				$store->{leaf},
+#				);
+#			open FO,">",$tmp;
+#			print FO $store->{data};
+#			close FO;
+#			$store->{data}=$tmp;
+#		}
+#	}
    	NightGun::message("StoreLoader","Type[",$store->{type},"] Get ",
 		$store->{files} ? scalar(@{$store->{files}}) : 0," files, ",
 		$store->{dirs} ? scalar(@{$store->{dirs}}) : 0 , " dirs"

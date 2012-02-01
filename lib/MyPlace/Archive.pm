@@ -2,6 +2,8 @@
 package MyPlace::Archive;
 use strict;
 use warnings;
+use Encode;
+my $UTF8 = find_encoding('utf8');
 
 my $PACKAGE_NAME="MyPlace::Archive";
 my  @filetype;
@@ -151,6 +153,7 @@ sub build_cmdline {
 }
 
 sub null_stdio {
+	return;
     my $self=shift;
     open $self->{olderr},">&",\*STDERR unless($self->{olderr});
     open $self->{oldout},">&",\*STDOUT unless($self->{oldout});
@@ -218,8 +221,11 @@ sub handler_test {
 }
 sub handler_extract {
     my($self,$handler,$source,$entry)=@_;
-#    print STDERR "Extract $entry from $source\n";
+    print STDERR "Extract $entry from $source\n";
     my $result;
+#	$source = $UTF8->decode($source);
+#	$entry = $UTF8->encode($entry);
+    print STDERR "Extract $entry from $source\n";
     $self->null_stdio;
     if($handler->{cmd_extract}) {
         open FI,"-|:raw",build_cmdline($handler->{cmd_extract},$source,$entry) or return undef;
@@ -243,9 +249,11 @@ sub handler_list {
     else {
         @result=$handler->list_content($source);
     }
+#	map {$_ = $UTF8->decode($_)} @result;
     my %t_dirs;
     my @t_files;
     foreach(@result) {
+		print STDERR $_;
         chomp;
         s/\\/\//g;
         if(/\/$/) {
