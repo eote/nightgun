@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 BEGIN {
-	use File::Spec::Functions qw/catfile catdir rel2abs curdir abs2rel/;
+	use File::Spec::Functions qw/catfile catdir rel2abs curdir abs2rel catpath splitpath/;
 	our $DataDir;
 	our $ModuleDir;
 	$DataDir = curdir() unless($DataDir);
@@ -29,6 +29,8 @@ use vars qw/
 	$LANG
 	$REQUEST_URI
 	$ISO8859
+	$QUERY
+	%ACTION
 /;
 
 use MyPlace::Encode qw/guess_encoding/;
@@ -43,18 +45,16 @@ my $FH_ERR;
 
 
 sub DoRequest {
-	use Data::Dumper;
 	&Init;
-	&DebugPrint(Data::Dumper->Dump([\%ENV],['*ENV']));
-	&LoadStore($REQUEST_PATH);
+	&DoAction;
 	&Quit;
 }
 
 sub Init {
-	&InitVariables;
+	$LOG_FILENAME = catfile($DataDir,'debug.log') unless($LOG_FILENAME);
 	open $FH_ERR,'>&',\*STDERR;
 	open STDERR,'>>',$LOG_FILENAME;
-	NightGun::init($DataDir,$DataDir);
+	&InitVariables;
 }
 
 sub InitVariables {
@@ -65,17 +65,8 @@ sub InitVariables {
 	use Env qw/$SCRIPT_NAME $PATH_INFO $LANG/;
 	$UTF8 = find_encoding('utf8');
 	$ISO8859 = find_encoding('iso-8859-1');
-	$Worker = NightGun::StoreLoader->new();
-	$History = NightGun::History->new($NightGun::Config);
-	$Recents = NightGun::Recents->new($NightGun::Config);
 	$q = CGI->new;
-	#$REQUEST_PATH = $UTF8->decode(($PATH_INFO ? $PATH_INFO : shift(@ARGV)));
-	#$PATH_INFO = 
-	#$REQUEST_PATH = $PATH_INFO ? $PATH_INFO : shift(@ARGV);
-	$REQUEST_PATH = &Uri2Path($REQUEST_URI);
-#	eval { $REQUEST_PATH = ($ISO8859->encode($UTF8->decode($REQUEST_PATH))) };
 	$BASE_URL = $q->url() || $SCRIPT_NAME;
-	$LOG_FILENAME = catfile($DataDir,'debug.log') unless($LOG_FILENAME);
 	%COPYRIGHT = (
 		NIGHTGUN=>$q->a({-href=>'http://nightgun.googlecode.com'},"NightGun"),
 		MYPLACE=>$q->a({-href=>'mailto:xiaoranzzz@myplace.hell'},$q->strong("xiaoranzzz")),
@@ -85,19 +76,87 @@ sub InitVariables {
 	
 	$COPYRIGHT = "Power by &copy;$COPYRIGHT{NIGHTGUN} &copy;$COPYRIGHT{MYPLACE}, $COPYRIGHT{DATE}." unless($COPYRIGHT);
 	$CSS = catfile($DataDir,'theme.css') unless($CSS);
+	$QUERY = &GetQuery();
+	$ACTION{'read'} = \&DoRead;
+	$ACTION{'debug'} = \&DoDebug;
+	$ACTION{'error'} = \&DoError;
 }
 
-sub Uri2Path {
-	my $uri = shift;
-	my $path = substr($uri,length($SCRIPT_NAME));
-	$path = uri_unescape($path);
-	return $path;
-	if($ENV{'HTTP_ACCEPT_CHARSET'} =~ m/^\s*([^,]+)/) {
-		my $charset = $1;
-		eval {from_to($path,$charset,'iso-8859-1');};
+sub DoAction {
+	my $action = $QUERY->{do};
+	$action = 'read' unless($action);
+	if(defined $ACTION{$action}) {
+		&{$ACTION{$action}};
 	}
-	return $path;
+	else {
+		&{$ACTION{'error'}}('500',"Invalid action : $action");		
+	}
 }
+
+sub DoDebug {
+	use Data::Dumper;
+	local $Data::Dumper::Purity = 1;
+	local $Data::Dumper::DeepCopy = 1;
+	my @msg = Data::Dumper->Dump([\%ENV,$QUERY],['*ENV','*QUERY']);
+	DebugPrint(@msg);
+	&{$ACTION{'error'}}('500','Debug',@msg);
+}
+
+sub DoRead {
+	NightGun::init($DataDir,$DataDir);
+	$Worker = NightGun::StoreLoader->new();
+	$History = NightGun::History->new($NightGun::Config);
+	$Recents = NightGun::Recents->new($NightGun::Config);
+	&LoadStore($QUERY->{target});
+}
+
+
+sub DoError {
+	my ($status,$msg,@texts) = @_;
+	print $q->header(-status=>$status);
+	print $q->start_html('Error');
+	print $q->h1($msg);
+	print $q->pre(join("\n",@texts)) if(@texts);
+	print $q->end_html;
+	return;
+}
+
+
+sub GetQuery {
+	my $query = scalar($q->Vars);
+	my %query = %{$query} if($query);
+	$query{path_info} = $q->path_info() || '/';
+	$query{target} = $query{path_info};
+	if($query{id}) {
+		my $_ = $query{id};
+		if(m/\/$/) {
+			$query{target} = catdir($query{target},$query{id});
+			$query{target} .= '/' unless($query{target} =~ m/\/$/);
+		}
+		else {
+			$query{target} = catfile($query{target},$query{id});
+		}
+	}
+	$query{url} = $q->url;
+	return \%query;
+}
+
+sub BuildUrl {
+	my $url = shift;
+	return $BASE_URL . $url;
+}
+
+#sub Uri2Path {
+#	my $uri = shift;
+#	my $path = substr($uri,length($SCRIPT_NAME));
+#	$path = uri_unescape($path);
+#	return $path;
+#	if($ENV{'HTTP_ACCEPT_CHARSET'} =~ m/^\s*([^,]+)/) {
+#		my $charset = $1;
+#		eval {from_to($path,$charset,'iso-8859-1');};
+#	}
+#	return $path;
+#}
 
 sub GetParam {
   my ($name, $default) = @_;
@@ -122,7 +181,7 @@ sub QuoteHtml {
 
 sub DebugPrint {
 	print STDERR @_;
-	print FH_ERR @_;
+	print $FH_ERR @_;
 	return @_;
 }
 
@@ -248,11 +307,12 @@ sub LoadStore {
         my @history_info = $History->get($store->{root});
 		my $path = $history_info[0];
 		if($path) {
-			return print $q->redirect("$BASE_URL$path");
+			return print $q->redirect($BASE_URL . $path);
 		}
     }
     if($store->{type} == $Worker->TYPE_URI) {
-#        my $uri = $store->{data};
+        my $uri = $store->{data};
+	#	print $q->redirect($uri);
 #        $uri = _to_gtk($uri) unless($store->{donot_encode});
 #        $uri = uri_escape($uri,"%&") unless($store->{donot_escape});
 #        $GUI->content_set_uri($uri);
@@ -294,8 +354,7 @@ sub LoadStore {
 			$default_file = uri_escape($UTF8->encode($default_file));
 			$default_file =~ s/%2[fF]/\//g;
 			$default_file =~ s/%3[aA]/:/g;
-			DebugPrint 'redirect ' . "$BASE_URL$default_file\n";
-			print $q->redirect("$BASE_URL$default_file");
+			print $q->redirect($BASE_URL . $default_file);
 			return;
 		}
 	}
@@ -333,6 +392,7 @@ sub LoadStore {
 	#$title =~ s/\/+$//;
 	#$title =~ s/^.+\///;
 	eval {$title = $UTF8->decode($title);};
+	
 	DebugPrint "filetype=>$filetype\nmimetype=>$mimetype\n";
 	DebugPrint "length of data=>" . length($data) . "\n";
 	DebugPrint "title=>$title\n";
@@ -384,7 +444,7 @@ sub PrintList {
 	while(@maps) {
 		my $name = shift @maps;
 		my $url = shift @maps;
-		print $q->li($q->a({-href=>"$BASE_URL$url"},$name));
+		print $q->li($q->a({-href=>$BASE_URL . $url},$name));
 	}
 	EndContent($q->end_ul);
 	PrintFooter($title || $path);

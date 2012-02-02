@@ -46,6 +46,10 @@ sub load {
         $self->{leaf}=undef;
         $self->{donot_encode}=1;
         #$self->{donot_escape}=1;
+		print STDERR ref $xml->{Item},"\n";
+		if(ref $xml->{Item} eq 'HASH') {
+			$xml->{Item} = [$xml->{Item}];
+		}
         if($entry) {
             my $found = undef;
             $self->{leaf} = $source . $path_sep . $entry;
